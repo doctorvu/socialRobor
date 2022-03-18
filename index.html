@@ -1,0 +1,59 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        img {
+            max-width: 1000px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <button id="wall-post">Опубликовать карточку</button>
+        <span></span>
+    </div>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script>
+
+        $('#wall-post').on('click', albumRequest);
+
+        const randNum = Math.floor(Math.random() * 173);
+
+        function getUrl() {
+            return 'https://api.vk.com/method/photos.get?owner_id=-61047747&album_id=199154577&count=173&access_token=c11d6a6bf405f78f88d123e62b5f556edb8f33a3e7a394eb420a5d4e75cfd8c080c8c63385e70e8c504cb&v=5.131'
+        };
+
+        function sendPostWall (text, pic) {
+            let requestWall = `https://api.vk.com/method/wall.post?owner_id=-61047747&friends_only=0&message="${text}"&attachments=photo-61047747_${pic}&access_token=c11d6a6bf405f78f88d123e62b5f556edb8f33a3e7a394eb420a5d4e75cfd8c080c8c63385e70e8c504cb&v=5.131`;
+            console.log(requestWall);
+            $.ajax({
+                url: requestWall,
+                method: 'GET',
+                dataType: 'JSONP',
+            });
+        };
+
+        function albumRequest() { 
+            $.ajax({
+            url: getUrl(),
+            method: 'GET',
+            dataType: 'JSONP',
+            success: function (data) {
+                let dataPic = data.response.items[randNum];
+                let urlPic = dataPic.sizes[6].url;
+                let textPic = dataPic.text;
+                let idPic = dataPic.id;
+                let htmlImgText = '<img src="' + urlPic +  '" alt="' + textPic + '"> <div>' + textPic + '</div>';
+                $('div').html(htmlImgText);
+                console.log(dataPic);
+                sendPostWall(textPic, idPic);
+            }
+            });
+        };
+    </script>
+           
+</body>
+</html>
